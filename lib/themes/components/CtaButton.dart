@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-/// زر CTA عام يعيد استخدامه في كل الشاشات
+/// Generic CTA button that reuses across all fullwidth screens
 class CtaButton extends StatelessWidget {
   const CtaButton({
     super.key,
     required this.label,
     required this.onPressed,
     this.icon,
-    this.width, // لو null ومع fullWidth=false هيبقى 343 افتراضيًا
+    this.width, // If null and fullWidth=false, it will be 343 by default
     this.height = 48,
     this.fullWidth = false,
   });
@@ -24,9 +24,9 @@ class CtaButton extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
 
-    // أيقونة: display:flex; 24×24; padding:3.25; justify/align center; flex-shrink:0
+    // Icon box 24x24 with padding 3.25 => Actual size ≈ 17.5
     const double _iconBox = 24;
-    const double _iconPad = 3.25; // ينتج أيقونة فعلية ≈ 17.5
+    const double _iconPad = 3.25;
     const double _gap = 10;
 
     final double effectiveWidth = fullWidth ? double.infinity : (width ?? 343);
@@ -36,61 +36,62 @@ class CtaButton extends StatelessWidget {
       height: height,
       child: ElevatedButton(
         onPressed: onPressed,
-        clipBehavior: Clip.hardEdge, // يمنع خروج المحتوى خارج حدود الزر
+        clipBehavior: Clip.hardEdge,
         style: ElevatedButton.styleFrom(
           backgroundColor: cs.primary,
-          foregroundColor: cs.onPrimary, // يلوّن النص والأيقونة افتراضيًا
+          foregroundColor: cs.onPrimary,
           padding: const EdgeInsets.all(10),
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadiusDirectional.all(Radius.circular(8)),
           ),
           textStyle: theme.textTheme.labelLarge?.copyWith(
-            // CSS: font-family + size + weight + line-height: normal
             fontFamily: 'IBM Plex Sans Arabic',
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w500,
             height: 1.0,
           ),
         ),
-        // محتوى الزر يتقلّص تلقائيًا لو العرض ضاق
+        // Button content shrinks automatically if width narrows
         child: FittedBox(
           fit: BoxFit.scaleDown,
           alignment: Alignment.center,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null)
-                SizedBox(
-                  width: _iconBox,
-                  height: _iconBox,
-                  child: Padding(
-                    padding: const EdgeInsets.all(_iconPad),
-                    // نضمن التوسيط الكامل للأيقونة داخل الصندوق
-                    child: Center(
-                      child: Icon(
-                        icon,
-                        size: _iconBox - _iconPad * 2, // ≈ 17.5
-                        color: cs.onPrimary, // CSS: color: #FFF
+          //👇 We fix the content direction LTR: icon first, then text always
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null)
+                  SizedBox(
+                    width: _iconBox,
+                    height: _iconBox,
+                    child: Padding(
+                      padding: const EdgeInsets.all(_iconPad),
+                      child: Center(
+                        child: Icon(
+                          icon,
+                          size: _iconBox - _iconPad * 2, // ≈ 17.5
+                          color: cs.onPrimary,
+                        ),
                       ),
                     ),
                   ),
+                if (icon != null) const SizedBox(width: _gap),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontFamily: 'IBM Plex Sans Arabic',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    height: 1.0,
+                    color: cs.onPrimary,
+                  ),
                 ),
-              if (icon != null) const SizedBox(width: _gap),
-              // CSS: color #FFF, text-align center, font props أعلاه
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.labelLarge?.copyWith(
-                  fontFamily: 'IBM Plex Sans Arabic',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  height: 1.0, // line-height: normal
-                  color: cs.onPrimary, // var(--Primary-0, #FFF)
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

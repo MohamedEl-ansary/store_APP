@@ -37,6 +37,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
   shared_preferences: ^2.5.3
+  go_router: ^14.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -57,7 +58,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/Upload-photo 1.png   # لو في مسافة في اسم الملف يفضّل تسيبه زي كده أو تغيّر الاسم بدون مسافة
+    - assets/images/  
+
   fonts:
     - family: IBM Plex Sans Arabic
       fonts:

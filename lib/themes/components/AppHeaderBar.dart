@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:saber_static_ui/huge_icons.dart';
 
-/// شريط علوي جاهز: زر رجوع + عنوان في المنتصف مع موازنة تلقائية.
-/// يمكن تمرير أيقونات مخصّصة (مثلاً AppIcons.chevronLeft/Right)،
-/// وإلا يستخدم أيقونات Material الافتراضية.
+/// Ready-made top bar: Back button + centered title with auto-balancing.
+/// Custom icons can be scrolled; otherwise, HugeIcons is used as the default.
 class AppHeaderBar extends StatelessWidget {
   const AppHeaderBar({
     super.key,
@@ -17,20 +17,21 @@ class AppHeaderBar extends StatelessWidget {
 
   final String title;
   final VoidCallback? onBack;
-  final double tapArea; // مساحة زر الرجوع والموازِن
-  final double iconSize; // حجم الأيقونة
-  final Color? color; // لو null يستخدم onSurface
-  final IconData? iconLTR; // أيقونة الرجوع في LTR
-  final IconData? iconRTL; // أيقونة الرجوع في RTL
+  final double tapArea; //Back and balance button space
+  final double iconSize; // Icon size
+  final Color? color; // If null, use onSurface
+  final IconData? iconLTR; // Back icon in LTR
+  final IconData? iconRTL; // Back icon in RTL
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isRTL = Directionality.of(context) == TextDirection.rtl;
 
+    // ✅ RTL → Right (chevron_right), LTR → Left (chevron_left) of HugeIcons
     final backIcon = isRTL
-        ? (iconRTL ?? Icons.chevron_left)
-        : (iconLTR ?? Icons.chevron_right);
+        ? (iconRTL ?? HugeIcons.arrow_right_01_rounded_outline)
+        : (iconLTR ?? HugeIcons.arrow_left_01_rounded_outline);
 
     final backBtn = SizedBox(
       width: tapArea,
@@ -52,11 +53,10 @@ class AppHeaderBar extends StatelessWidget {
       textAlign: TextAlign.center,
       overflow: TextOverflow.ellipsis,
       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        fontFamily:
-            'IBM Plex Sans Arabic', // تأكد أن الاسم مطابق لما في pubspec
-        fontSize: 16, // font-size: 16px
-        fontWeight: FontWeight.w500, // font-weight: 500
-        height: 1.2, // line-height: 120%
+        fontFamily: 'IBM Plex Sans Arabic',
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        height: 1.2,
         letterSpacing: -0.32,
         color: color ?? cs.onSurface,
       ),
@@ -66,8 +66,7 @@ class AppHeaderBar extends StatelessWidget {
       children: [
         backBtn,
         Expanded(child: Center(child: titleWidget)),
-        // موازِن يضمن بقاء العنوان في المنتصف بالضبط
-        SizedBox(width: tapArea, height: tapArea),
+        // Balancer ensures the title stays exactly centered        SizedBox(width: tapArea, height: tapArea),
       ],
     );
   }
