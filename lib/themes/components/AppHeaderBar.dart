@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:saber_static_ui/huge_icons.dart';
 
-/// Ready-made top bar: Back button + centered title with auto-balancing.
-/// Custom icons can be scrolled; otherwise, HugeIcons is used as the default.
-class AppHeaderBar extends StatelessWidget {
+enum HeaderButtonSide { left, right }
+
+/// Ready-made AppBar: Back button + centered title with auto-balance.
+/// Works directly in Scaffold.appBar, and you can choose which side the back button is on.
+class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
   const AppHeaderBar({
     super.key,
     required this.title,
@@ -13,26 +15,33 @@ class AppHeaderBar extends StatelessWidget {
     this.color,
     this.iconLTR,
     this.iconRTL,
+    this.buttonSide = HeaderButtonSide.left, // 👈 اختَر مكان الزر
   });
 
   final String title;
   final VoidCallback? onBack;
-  final double tapArea; //Back and balance button space
-  final double iconSize; // Icon size
-  final Color? color; // If null, use onSurface
-  final IconData? iconLTR; // Back icon in LTR
-  final IconData? iconRTL; // Back icon in RTL
+  final double tapArea; // مساحة زر الرجوع/الموازن
+  final double iconSize; // حجم الأيقونة
+  final Color? color; // إن كان null يستخدم onSurface
+  final IconData? iconLTR; // أيقونة الرجوع في LTR
+  final IconData? iconRTL; // أيقونة الرجوع في RTL
+  final HeaderButtonSide buttonSide;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final isRTL = Directionality.of(context) == TextDirection.rtl;
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final isRTL = Directionality.of(context) == TextDirection.ltr;
 
-    // ✅ RTL → Right (chevron_right), LTR → Left (chevron_left) of HugeIcons
+    // السهم الصحيح حسب اتجاه الواجهة (مش حسب مكان الزر)
     final backIcon = isRTL
         ? (iconRTL ?? HugeIcons.arrow_right_01_rounded_outline)
         : (iconLTR ?? HugeIcons.arrow_left_01_rounded_outline);
 
+    // زر الرجوع
     final backBtn = SizedBox(
       width: tapArea,
       height: tapArea,
@@ -48,11 +57,13 @@ class AppHeaderBar extends StatelessWidget {
       ),
     );
 
+    // العنوان
     final titleWidget = Text(
       title,
-      textAlign: TextAlign.center,
+      maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+      textAlign: TextAlign.center,
+      style: theme.textTheme.titleMedium?.copyWith(
         fontFamily: 'IBM Plex Sans Arabic',
         fontSize: 16,
         fontWeight: FontWeight.w500,
@@ -62,12 +73,32 @@ class AppHeaderBar extends StatelessWidget {
       ),
     );
 
-    return Row(
-      children: [
-        backBtn,
-        Expanded(child: Center(child: titleWidget)),
-        // Balancer ensures the title stays exactly centered        SizedBox(width: tapArea, height: tapArea),
-      ],
+    // موازن علشان العنوان يفضل Center
+    final balancer = SizedBox(width: tapArea, height: tapArea);
+
+    // ترتيب العناصر حسب الجهة المطلوبة
+    final children = (buttonSide == HeaderButtonSide.left)
+        ? <Widget>[
+            backBtn,
+            Expanded(child: Center(child: titleWidget)),
+            balancer,
+          ]
+        : <Widget>[
+            balancer,
+            Expanded(child: Center(child: titleWidget)),
+            backBtn,
+          ];
+
+    return Material(
+      color: theme.scaffoldBackgroundColor,
+      elevation: 0,
+      child: SafeArea(
+        bottom: false,
+        child: SizedBox(
+          height: kToolbarHeight,
+          child: Row(children: children),
+        ),
+      ),
     );
   }
 }
