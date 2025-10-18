@@ -20,11 +20,11 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
 
   final String title;
   final VoidCallback? onBack;
-  final double tapArea; // مساحة زر الرجوع/الموازن
-  final double iconSize; // حجم الأيقونة
-  final Color? color; // إن كان null يستخدم onSurface
-  final IconData? iconLTR; // أيقونة الرجوع في LTR
-  final IconData? iconRTL; // أيقونة الرجوع في RTL
+  final double tapArea; //Back/Equalizer button space
+  final double iconSize; //Icon size
+  final Color? color; // If null, use onSurface
+  final IconData? iconLTR; // Back icon in LTR
+  final IconData? iconRTL; // Back icon in RTL
   final HeaderButtonSide buttonSide;
 
   @override
@@ -36,12 +36,12 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
     final cs = theme.colorScheme;
     final isRTL = Directionality.of(context) == TextDirection.ltr;
 
-    // السهم الصحيح حسب اتجاه الواجهة (مش حسب مكان الزر)
+    // Correct arrow according to the interface direction (not according to the button location)
     final backIcon = isRTL
         ? (iconRTL ?? HugeIcons.arrow_right_01_rounded_outline)
         : (iconLTR ?? HugeIcons.arrow_left_01_rounded_outline);
 
-    // زر الرجوع
+    // Back button
     final backBtn = SizedBox(
       width: tapArea,
       height: tapArea,
@@ -57,7 +57,7 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
 
-    // العنوان
+    // the address
     final titleWidget = Text(
       title,
       maxLines: 1,
@@ -73,10 +73,10 @@ class AppHeaderBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
 
-    // موازن علشان العنوان يفضل Center
+    // Balanced so the address remains Center
     final balancer = SizedBox(width: tapArea, height: tapArea);
 
-    // ترتيب العناصر حسب الجهة المطلوبة
+    // Arrange the elements according to the required direction
     final children = (buttonSide == HeaderButtonSide.left)
         ? <Widget>[
             backBtn,

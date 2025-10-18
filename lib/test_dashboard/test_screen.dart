@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saber_static_ui/test_dashboard/My%20Portfolio.dart';
+import 'package:saber_static_ui/test_dashboard/card.dart';
 
 class TestScreen extends StatelessWidget {
   const TestScreen({super.key});
@@ -26,7 +27,7 @@ class TestScreen extends StatelessWidget {
                 _NavigationItem(
                   title: 'Buttons',
                   description: 'Preview primary and secondary buttons.',
-                  destination: MyPortfolioGallery(),
+                  destination: HeaderUsageDemo(),
                 ),
                 _NavigationItem(
                   title: 'Typography',

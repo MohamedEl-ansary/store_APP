@@ -62,6 +62,7 @@ class MyApp extends ConsumerWidget {
       theme: lightTheme(locale: const Locale('en')),
       darkTheme: darkTheme(locale: const Locale('en')),
       themeMode: themeMode,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
